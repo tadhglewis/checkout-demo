@@ -21,7 +21,7 @@ describe('calculateTotal', () => {
             sku: 'classic',
             discount: {
               discountType: 'buyXFreeX',
-              buyQuantity: 2,
+              buyQuantity: 3,
               freeQuantity: 1,
             },
           },
@@ -61,5 +61,50 @@ describe('calculateTotal', () => {
         ],
       }),
     ).toEqual(0);
+  });
+
+  it('should calculate total with percentage, fixed, and buy x get x free discount', () => {
+    expect(
+      calculateTotal({
+        skus: [
+          'classic',
+          'standout',
+          'premium',
+          'premium',
+          'premium',
+          'premium',
+          'premium',
+          'premium',
+          'premium',
+          'premium',
+          'premium',
+          'premium',
+        ],
+        pricingRules: [
+          {
+            sku: 'classic',
+            discount: {
+              discountType: 'fixed',
+              amount: 30,
+            },
+          },
+          {
+            sku: 'standout',
+            discount: {
+              discountType: 'percentage',
+              percentage: 100,
+            },
+          },
+          {
+            sku: 'premium',
+            discount: {
+              discountType: 'buyXFreeX',
+              buyQuantity: 10,
+              freeQuantity: 4,
+            },
+          },
+        ],
+      }),
+    ).toEqual(2399.94);
   });
 });

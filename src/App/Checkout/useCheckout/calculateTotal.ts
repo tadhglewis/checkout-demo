@@ -71,10 +71,10 @@ const pricingRuleQuery = (pricingRules: PricingRule[], sku: Sku) => {
 
 const getTotalWithPricingRules = ({
   skus,
-  pricingRules,
+  pricingRules = undefined,
 }: {
   skus: Sku[];
-  pricingRules: PricingRule[];
+  pricingRules?: PricingRule[];
 }) => {
   const uniqueSkuItemsNum = skus.reduce(
     (acc, sku) => ({ ...acc, [sku]: (acc[sku] || 0) + 1 }),
@@ -84,16 +84,19 @@ const getTotalWithPricingRules = ({
   let totalPrice = 0;
 
   Object.keys(uniqueSkuItemsNum).forEach((sku) => {
-    const pricingRule = pricingRuleQuery(pricingRules, sku as Sku);
+    const pricingRule = pricingRules
+      ? pricingRuleQuery(pricingRules, sku as Sku)
+      : null;
     const skuQantity = uniqueSkuItemsNum[sku as Sku];
 
+    // Abstract out into functions when this gets too long :)
     switch (pricingRule?.discount.discountType) {
       case 'fixed':
         totalPrice +=
           pricingRule.discount.amount * uniqueSkuItemsNum[sku as Sku];
         break;
       case 'percentage':
-        totalPrice += totalPrice +=
+        totalPrice +=
           (pricingRule.product.price -
             pricingRule.product.price *
               (pricingRule.discount.percentage / 100)) *
@@ -103,7 +106,8 @@ const getTotalWithPricingRules = ({
         totalPrice +=
           pricingRule.product.price *
           (skuQantity -
-            Math.floor(skuQantity / pricingRule.discount.buyQuantity));
+            (skuQantity / pricingRule.discount.buyQuantity) *
+              pricingRule.discount.freeQuantity);
         break;
       default:
         totalPrice +=
