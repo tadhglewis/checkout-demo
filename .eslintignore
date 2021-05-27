@@ -1,13 +1,8 @@
-node_modules
-npm-debug.log
-
 # managed by sku
-.eslintrc
-.prettierrc
+*.less.d.ts
 coverage/
 dist-playroom/
 dist-storybook/
 dist/
 report/
-tsconfig.json
 # end managed by sku
