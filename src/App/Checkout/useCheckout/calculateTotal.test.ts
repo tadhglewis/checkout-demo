@@ -7,7 +7,7 @@ describe('calculateTotal', () => {
       calculateTotal({
         skus: ['classic', 'standout', 'premium'],
         pricingRules: [],
-      }),
+      }).total,
     ).toEqual(987.97);
   });
 
@@ -26,7 +26,7 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }),
+      }).total,
     ).toEqual(934.97);
   });
 
@@ -41,7 +41,7 @@ describe('calculateTotal', () => {
             discount: { discountType: 'fixed', amount: 299.99 },
           },
         ],
-      }),
+      }).total,
     ).toEqual(1294.96);
   });
 
@@ -75,7 +75,7 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }),
+      }).total,
     ).toEqual(2071.94);
   });
 
@@ -93,7 +93,7 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }),
+      }).total,
     ).toEqual(0);
   });
 
@@ -138,7 +138,7 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }),
+      }).total,
     ).toEqual(2399.94);
   });
 
@@ -156,7 +156,7 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }),
+      }).total,
     ).toEqual(539.98);
   });
 
@@ -173,7 +173,7 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }),
+      }).total,
     ).toEqual(242.991);
   });
 });

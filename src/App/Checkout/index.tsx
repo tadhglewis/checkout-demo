@@ -17,7 +17,7 @@ import Products from './Products';
 import useCheckout from './useCheckout';
 
 export default () => {
-  const { total, add, cartItems, clear, customer, setCustomer } = useCheckout();
+  const { cart, add, cartItems, clear, customer, setCustomer } = useCheckout();
 
   return (
     <ContentBlock width="large">
@@ -61,7 +61,10 @@ export default () => {
                         <Text key={id + index}>{title}</Text>
                       ))}
                     </List>
-                    <Text>Total: ${total.toFixed(2)}</Text>
+                    <Text>Total: ${cart.total.toFixed(2)}</Text>
+                    <Text tone="brandAccent">
+                      Savings: ${cart.discountAmount.toFixed(2)}
+                    </Text>
                     <Columns space="gutter">
                       <Column width="content">
                         <Button tone="brandAccent">Purchase</Button>

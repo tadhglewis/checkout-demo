@@ -8,7 +8,10 @@ import calculateTotal from './calculateTotal';
 
 const useCheckout = () => {
   const [customer, setCustomer] = useState<string>('');
-  const [total, setTotal] = useState(0);
+  const [cart, setCart] = useState<{ total: number; discountAmount: number }>({
+    total: 0,
+    discountAmount: 0,
+  });
   const [cartItems, setCartItems] = useState<Product[]>([]);
 
   const addToCart = (product: Product) => {
@@ -16,7 +19,7 @@ const useCheckout = () => {
   };
 
   useEffect(() => {
-    setTotal(
+    setCart(
       calculateTotal({
         skus: cartItems.map(({ sku }) => sku),
         pricingRules: pricingRules[customer],
@@ -26,7 +29,7 @@ const useCheckout = () => {
 
   return {
     add: addToCart,
-    total,
+    cart,
     cartItems,
     clear: () => setCartItems([]),
     setCustomer,

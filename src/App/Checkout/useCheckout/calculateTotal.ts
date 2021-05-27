@@ -132,7 +132,9 @@ const calculateTotal = ({
 }) => {
   const total = getTotalWithPricingRules({ skus, pricingRules });
 
-  return total;
+  const totalWithoutDiscount = getTotalWithPricingRules({ skus });
+
+  return { total, discountAmount: total - totalWithoutDiscount };
 };
 
 export default calculateTotal;
