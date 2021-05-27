@@ -22,7 +22,7 @@ export default () => {
   return (
     <ContentBlock width="large">
       <Box background="brand" paddingY="xxlarge" paddingX="gutter">
-        <Columns space="gutter">
+        <Columns space="gutter" collapseBelow="tablet">
           <Column>
             <Stack space="medium">
               <Heading level="1">Checkout Demo</Heading>
@@ -48,7 +48,7 @@ export default () => {
         <Card>
           <Stack space="medium">
             <Stack space="large">
-              <Columns space="gutter">
+              <Columns space="gutter" collapseBelow="tablet">
                 <Column width="3/4">
                   <Heading level="1">Ads</Heading>
                   <Products addToCart={add} />
@@ -65,7 +65,7 @@ export default () => {
                     <Text tone="brandAccent">
                       Save: ${cart.discountAmount.toFixed(2)}
                     </Text>
-                    <Columns space="gutter">
+                    <Columns space="gutter" collapseBelow="desktop">
                       <Column width="content">
                         <Button tone="brandAccent">Purchase</Button>
                       </Column>

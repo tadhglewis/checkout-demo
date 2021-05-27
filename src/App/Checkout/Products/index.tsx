@@ -20,7 +20,7 @@ export default ({ addToCart }: { addToCart: (product: Product) => void }) => (
   <Stack space="small" dividers>
     {products.map(({ ...product }) => (
       <Card key={product.id}>
-        <Columns space="gutter">
+        <Columns space="gutter" collapseBelow="tablet">
           <Column>
             <Stack space="gutter">
               <Inline space="small" alignY="center">
