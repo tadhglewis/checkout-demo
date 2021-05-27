@@ -141,4 +141,22 @@ describe('calculateTotal', () => {
       }),
     ).toEqual(2399.94);
   });
+
+  it('should not give any discounts due to buy quantity - buy 3 for 2', () => {
+    expect(
+      calculateTotal({
+        skus: ['classic', 'classic'],
+        pricingRules: [
+          {
+            sku: 'classic',
+            discount: {
+              discountType: 'buyXFreeX',
+              buyQuantity: 3,
+              freeQuantity: 1,
+            },
+          },
+        ],
+      }),
+    ).toEqual(539.98);
+  });
 });
