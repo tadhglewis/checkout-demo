@@ -14,9 +14,9 @@ import React from 'react';
 
 import { products } from 'src/App/dummyData';
 
-import Product from '../Product';
+import { Sku } from '../Product';
 
-export default ({ addToCart }: { addToCart: (product: Product) => void }) => (
+export default ({ addToCart }: { addToCart: (sku: Sku) => void }) => (
   <Stack space="small" dividers>
     {products.map(({ ...product }) => (
       <Card key={product.id}>
@@ -34,7 +34,7 @@ export default ({ addToCart }: { addToCart: (product: Product) => void }) => (
           </Column>
           <Column width="content">
             <Stack space="gutter">
-              <Button size="small" onClick={() => addToCart(product)}>
+              <Button size="small" onClick={() => addToCart(product.sku)}>
                 Add to cart <IconPromote />
               </Button>
             </Stack>

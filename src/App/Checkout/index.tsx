@@ -13,6 +13,9 @@ import {
 } from 'braid-design-system';
 import React from 'react';
 
+import { products } from '../dummyData';
+
+import { Sku } from './Product';
 import Products from './Products';
 import useCheckout from './useCheckout';
 
@@ -57,8 +60,14 @@ export default () => {
                   <Stack space="gutter">
                     <Heading level="2">Cart</Heading>
                     <List>
-                      {cartItems.map(({ title, id }, index) => (
-                        <Text key={id + index}>{title}</Text>
+                      {(Object.keys(cartItems) as Sku[]).map((sku, index) => (
+                        <Text key={sku + index}>
+                          {
+                            products.find((product) => product.sku === sku)
+                              ?.title
+                          }{' '}
+                          x {cartItems[sku]}
+                        </Text>
                       ))}
                     </List>
                     <Text>Total: ${cart.total.toFixed(2)}</Text>

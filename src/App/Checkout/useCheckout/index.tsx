@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { pricingRules } from 'src/App/dummyData';
 
-import Product from '../Product';
+import { Sku } from '../Product';
 
 import calculateTotal from './calculateTotal';
 
@@ -12,16 +12,19 @@ const useCheckout = () => {
     total: 0,
     discountAmount: 0,
   });
-  const [cartItems, setCartItems] = useState<Product[]>([]);
+  const [cartItems, setCartItems] = useState<Partial<Record<Sku, number>>>({});
 
-  const addToCart = (product: Product) => {
-    setCartItems((prevState) => [...prevState, product]);
+  const addToCart = (sku: Sku) => {
+    setCartItems((prevState) => ({
+      ...prevState,
+      [sku]: (prevState[sku] || 0) + 1,
+    }));
   };
 
   useEffect(() => {
     setCart(
       calculateTotal({
-        skus: cartItems.map(({ sku }) => sku),
+        cartItems,
         pricingRules: pricingRules[customer],
       }),
     );
@@ -31,7 +34,7 @@ const useCheckout = () => {
     add: addToCart,
     cart,
     cartItems,
-    clear: () => setCartItems([]),
+    clear: () => setCartItems({}),
     setCustomer,
     customer,
   };

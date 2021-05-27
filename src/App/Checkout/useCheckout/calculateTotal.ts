@@ -70,30 +70,24 @@ const pricingRuleQuery = (pricingRules: PricingRule[], sku: Sku) => {
 };
 
 const getTotalWithPricingRules = ({
-  skus,
+  cartItems,
   pricingRules = undefined,
 }: {
-  skus: Sku[];
+  cartItems: Partial<Record<Sku, number>>;
   pricingRules?: PricingRule[];
 }) => {
-  const uniqueSkuItemsNum = skus.reduce(
-    (acc, sku) => ({ ...acc, [sku]: (acc[sku] || 0) + 1 }),
-    {} as Record<Sku, number>,
-  );
-
   let totalPrice = 0;
 
-  Object.keys(uniqueSkuItemsNum).forEach((sku) => {
+  (Object.keys(cartItems) as Sku[]).forEach((sku) => {
     const pricingRule = pricingRules
-      ? pricingRuleQuery(pricingRules, sku as Sku)
+      ? pricingRuleQuery(pricingRules, sku)
       : null;
-    const skuQantity = uniqueSkuItemsNum[sku as Sku];
+    const skuQantity = cartItems[sku] || 0;
 
     // Abstract out into functions when this gets too long :)
     switch (pricingRule?.discount.discountType) {
       case 'fixed':
-        totalPrice +=
-          pricingRule.discount.amount * uniqueSkuItemsNum[sku as Sku];
+        totalPrice += pricingRule.discount.amount * skuQantity;
         break;
       case 'percentage':
         totalPrice +=
@@ -124,15 +118,15 @@ const getTotalWithPricingRules = ({
 };
 
 const calculateTotal = ({
-  skus,
+  cartItems,
   pricingRules,
 }: {
-  skus: Sku[];
+  cartItems: Partial<Record<Sku, number>>;
   pricingRules: PricingRule[];
 }) => {
-  const total = getTotalWithPricingRules({ skus, pricingRules });
+  const total = getTotalWithPricingRules({ cartItems, pricingRules });
 
-  const totalWithoutDiscount = getTotalWithPricingRules({ skus });
+  const totalWithoutDiscount = getTotalWithPricingRules({ cartItems });
 
   return { total, discountAmount: total - totalWithoutDiscount };
 };
