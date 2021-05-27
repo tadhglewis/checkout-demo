@@ -159,4 +159,21 @@ describe('calculateTotal', () => {
       }),
     ).toEqual(539.98);
   });
+
+  it('should give 10% discount on classic sku', () => {
+    expect(
+      calculateTotal({
+        skus: ['classic'],
+        pricingRules: [
+          {
+            sku: 'classic',
+            discount: {
+              discountType: 'percentage',
+              percentage: 10,
+            },
+          },
+        ],
+      }),
+    ).toEqual(242.991);
+  });
 });
