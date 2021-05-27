@@ -1,4 +1,14 @@
-# checkout-demo-sku
+# checkout-demo
+
+[![Test](https://github.com/tadhglewis/checkout-demo/actions/workflows/test.yml/badge.svg)](https://github.com/tadhglewis/checkout-demo/actions/workflows/test.yml)
+
+You can view the actual challenge (discount logic) below or view the live ui in front here [https://checkout-demo.pages.dev/apac](https://checkout-demo.pages.dev/apac)
+
+Logic: [src/App/Checkout/useCheckout/calculateTotal.ts](https://github.com/tadhglewis/checkout-demo/blob/master/src/App/Checkout/useCheckout/calculateTotal.ts)
+
+Unit test: [src/App/Checkout/useCheckout/calculateTotal.test.ts](https://github.com/tadhglewis/checkout-demo/blob/master/src/App/Checkout/useCheckout/calculateTotal.test.ts)
+
+I have built a ui for fun and to finally try out Braid - it's super clean :)
 
 This project is powered by [sku](https://github.com/seek-oss/sku), [braid](https://github.com/seek-oss/braid-design-system) and built with [React](https://facebook.github.io/react).
 
