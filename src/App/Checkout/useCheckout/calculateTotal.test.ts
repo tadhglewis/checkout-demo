@@ -5,7 +5,7 @@ describe('calculateTotal', () => {
   it('should calculate total without discounts', () => {
     expect(
       calculateTotal({
-        skus: ['classic', 'standout', 'premium'],
+        cartItems: { classic: 1, standout: 1, premium: 1 },
         pricingRules: [],
       }).total,
     ).toEqual(987.97);
@@ -15,7 +15,7 @@ describe('calculateTotal', () => {
   it('should calculate total with 3 for 2 (1 free) discount', () => {
     expect(
       calculateTotal({
-        skus: ['classic', 'classic', 'classic', 'premium'],
+        cartItems: { classic: 3, premium: 1 },
         pricingRules: [
           {
             sku: 'classic',
@@ -34,7 +34,7 @@ describe('calculateTotal', () => {
   it('should calculate total with fixed discount', () => {
     expect(
       calculateTotal({
-        skus: ['standout', 'standout', 'standout', 'premium'],
+        cartItems: { standout: 3, premium: 1 },
         pricingRules: [
           {
             sku: 'standout',
@@ -49,15 +49,10 @@ describe('calculateTotal', () => {
   it('should calculate total with 5 for 4 (1 free) and fixed discount', () => {
     expect(
       calculateTotal({
-        skus: [
-          'standout',
-          'standout',
-          'standout',
-          'standout',
-          'standout',
-          'premium',
-          'premium',
-        ],
+        cartItems: {
+          standout: 5,
+          premium: 2,
+        },
         pricingRules: [
           {
             sku: 'standout',
@@ -83,7 +78,7 @@ describe('calculateTotal', () => {
   it('should calculate total with percentage discount', () => {
     expect(
       calculateTotal({
-        skus: ['standout', 'standout', 'standout'],
+        cartItems: { standout: 3 },
         pricingRules: [
           {
             sku: 'standout',
@@ -100,20 +95,11 @@ describe('calculateTotal', () => {
   it('should calculate total with percentage, fixed, and 10 for 6 (4 free) discount', () => {
     expect(
       calculateTotal({
-        skus: [
-          'classic',
-          'standout',
-          'premium',
-          'premium',
-          'premium',
-          'premium',
-          'premium',
-          'premium',
-          'premium',
-          'premium',
-          'premium',
-          'premium',
-        ],
+        cartItems: {
+          classic: 1,
+          standout: 1,
+          premium: 10,
+        },
         pricingRules: [
           {
             sku: 'classic',
@@ -145,7 +131,7 @@ describe('calculateTotal', () => {
   it('should not give any discounts due to buy quantity - buy 3 for 2', () => {
     expect(
       calculateTotal({
-        skus: ['classic', 'classic'],
+        cartItems: { classic: 2 },
         pricingRules: [
           {
             sku: 'classic',
@@ -163,7 +149,7 @@ describe('calculateTotal', () => {
   it('should give 10% discount on classic sku', () => {
     expect(
       calculateTotal({
-        skus: ['classic'],
+        cartItems: { classic: 1 },
         pricingRules: [
           {
             sku: 'classic',
