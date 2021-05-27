@@ -10,6 +10,11 @@ Unit test: [src/App/Checkout/useCheckout/calculateTotal.test.ts](https://github.
 
 I have built a ui for fun and to finally try out Braid - it's super clean :)
 
+Discount Types
+- Fixed - set ad to a specified price
+- Percentage - remove a percentage off the base ad price
+- Buy X get X free (technically x for x) - add x (5) ads to cart and remove the price of x (1)
+
 ----
 
 This project is powered by [sku](https://github.com/seek-oss/sku), [braid](https://github.com/seek-oss/braid-design-system) and built with [React](https://facebook.github.io/react).
