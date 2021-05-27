@@ -63,7 +63,7 @@ export default () => {
                     </List>
                     <Text>Total: ${cart.total.toFixed(2)}</Text>
                     <Text tone="brandAccent">
-                      Savings: ${cart.discountAmount.toFixed(2)}
+                      Save: ${cart.discountAmount.toFixed(2)}
                     </Text>
                     <Columns space="gutter">
                       <Column width="content">
