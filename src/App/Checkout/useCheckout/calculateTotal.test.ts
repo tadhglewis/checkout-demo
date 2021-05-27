@@ -12,7 +12,7 @@ describe('calculateTotal', () => {
   });
 
   // SecondBite
-  it('should calculate total with buy x get x free discount', () => {
+  it('should calculate total with 3 for 2 (1 free) discount', () => {
     expect(
       calculateTotal({
         skus: ['classic', 'classic', 'classic', 'premium'],
@@ -45,6 +45,40 @@ describe('calculateTotal', () => {
     ).toEqual(1294.96);
   });
 
+  // MYER
+  it('should calculate total with 5 for 4 (1 free) and fixed discount', () => {
+    expect(
+      calculateTotal({
+        skus: [
+          'standout',
+          'standout',
+          'standout',
+          'standout',
+          'standout',
+          'premium',
+          'premium',
+        ],
+        pricingRules: [
+          {
+            sku: 'standout',
+            discount: {
+              discountType: 'buyXFreeX',
+              buyQuantity: 5,
+              freeQuantity: 1,
+            },
+          },
+          {
+            sku: 'premium',
+            discount: {
+              discountType: 'fixed',
+              amount: 389.99,
+            },
+          },
+        ],
+      }),
+    ).toEqual(2071.94);
+  });
+
   // Other tests
   it('should calculate total with percentage discount', () => {
     expect(
@@ -63,7 +97,7 @@ describe('calculateTotal', () => {
     ).toEqual(0);
   });
 
-  it('should calculate total with percentage, fixed, and buy x get x free discount', () => {
+  it('should calculate total with percentage, fixed, and 10 for 6 (4 free) discount', () => {
     expect(
       calculateTotal({
         skus: [

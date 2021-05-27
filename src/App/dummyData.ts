@@ -1,4 +1,5 @@
 import Product from './Checkout/Product';
+import { PricingRule } from './Checkout/useCheckout/calculateTotal';
 
 // You'd use a GraphQL endpint to get products and query/filter them - for simplicity we defined an object
 export const products: Product[] = [
@@ -27,3 +28,35 @@ export const products: Product[] = [
     price: 394.99,
   },
 ];
+
+export const pricingRules: Record<string, PricingRule[]> = {
+  SecondBite: [
+    {
+      sku: 'classic',
+      discount: { discountType: 'buyXFreeX', buyQuantity: 3, freeQuantity: 1 },
+    },
+  ],
+  'Axil Coffee Roasters': [
+    {
+      sku: 'standout',
+      discount: {
+        discountType: 'fixed',
+        amount: 299.99,
+      },
+    },
+  ],
+  MYER: [
+    {
+      sku: 'standout',
+      discount: {
+        discountType: 'buyXFreeX',
+        buyQuantity: 5,
+        freeQuantity: 1,
+      },
+    },
+    {
+      sku: 'premium',
+      discount: { discountType: 'fixed', amount: 389.99 },
+    },
+  ],
+};

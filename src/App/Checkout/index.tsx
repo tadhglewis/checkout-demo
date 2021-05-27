@@ -5,6 +5,7 @@ import {
   Column,
   Columns,
   ContentBlock,
+  Dropdown,
   Heading,
   List,
   Stack,
@@ -16,7 +17,7 @@ import Products from './Products';
 import useCheckout from './useCheckout';
 
 export default () => {
-  const { total, add, cartItems, clear } = useCheckout();
+  const { total, add, cartItems, clear, customer, setCustomer } = useCheckout();
 
   return (
     <ContentBlock width="large">
@@ -24,6 +25,17 @@ export default () => {
         <Stack space="medium">
           <Heading level="1">Checkout Demo</Heading>
         </Stack>
+        <Dropdown
+          onChange={(e: any) => setCustomer(e.target.value)}
+          value={customer}
+          id=""
+          placeholder="Default"
+        >
+          <option />
+          <option>SecondBite</option>
+          <option>Axil Coffee Roasters</option>
+          <option>MYER</option>
+        </Dropdown>
       </Box>
       <Box paddingX={['xsmall', 'gutter']} style={{ marginTop: '-40px' }}>
         <Card>

@@ -19,7 +19,7 @@ type BuyXGetXFree = {
 
 type Discount = FixedDiscount | PercentageDiscount | BuyXGetXFree;
 
-type PricingRule = {
+export type PricingRule = {
   sku: Sku;
   discount: Discount;
 };

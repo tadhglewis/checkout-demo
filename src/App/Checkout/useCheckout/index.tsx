@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 
+import { pricingRules } from 'src/App/dummyData';
+
 import Product from '../Product';
 
 import calculateTotal from './calculateTotal';
 
 const useCheckout = () => {
+  const [customer, setCustomer] = useState<string>('');
   const [total, setTotal] = useState(0);
   const [cartItems, setCartItems] = useState<Product[]>([]);
 
@@ -16,21 +19,19 @@ const useCheckout = () => {
     setTotal(
       calculateTotal({
         skus: cartItems.map(({ sku }) => sku),
-        pricingRules: [
-          {
-            sku: 'classic',
-            discount: {
-              discountType: 'buyXFreeX',
-              buyQuantity: 5,
-              freeQuantity: 1,
-            },
-          },
-        ],
+        pricingRules: pricingRules[customer],
       }),
     );
-  }, [cartItems]);
+  }, [cartItems, customer]);
 
-  return { add: addToCart, total, cartItems, clear: () => setCartItems([]) };
+  return {
+    add: addToCart,
+    total,
+    cartItems,
+    clear: () => setCartItems([]),
+    setCustomer,
+    customer,
+  };
 };
 
 export default useCheckout;
