@@ -1,6 +1,5 @@
-import { products } from '../dummyData';
-
-import { Sku } from './Product';
+import { products } from '../../dummyData';
+import { Sku } from '../Product';
 
 type FixedDiscount = {
   discountType: 'fixed';
@@ -70,29 +69,51 @@ const pricingRuleQuery = (pricingRules: PricingRule[], sku: Sku) => {
   return { ...pricingRule, product };
 };
 
-const getAmountWithPriceRule = ({
-  sku,
+const getTotalWithPricingRules = ({
+  skus,
   pricingRules,
 }: {
-  sku: Sku;
+  skus: Sku[];
   pricingRules: PricingRule[];
 }) => {
-  const pricingRule = pricingRuleQuery(pricingRules, sku);
-  if (!pricingRule) {
-    return 0;
-  }
+  const uniqueSkuItemsNum = skus.reduce(
+    (acc, sku) => ({ ...acc, [sku]: (acc[sku] || 0) + 1 }),
+    {} as Record<Sku, number>,
+  );
 
-  switch (pricingRule.discount.discountType) {
-    case 'fixed':
-      return pricingRule.discount.amount;
-    case 'percentage':
-      return (
-        pricingRule.product.price -
-        pricingRule.product.price * (pricingRule.discount.percentage / 100)
-      );
-    case 'buyXFreeX':
-      return 0;
-  }
+  let totalPrice = 0;
+
+  Object.keys(uniqueSkuItemsNum).forEach((sku) => {
+    const pricingRule = pricingRuleQuery(pricingRules, sku as Sku);
+    const skuQantity = uniqueSkuItemsNum[sku as Sku];
+
+    switch (pricingRule?.discount.discountType) {
+      case 'fixed':
+        totalPrice +=
+          pricingRule.discount.amount * uniqueSkuItemsNum[sku as Sku];
+        break;
+      case 'percentage':
+        totalPrice += totalPrice +=
+          (pricingRule.product.price -
+            pricingRule.product.price *
+              (pricingRule.discount.percentage / 100)) *
+          skuQantity;
+        break;
+      case 'buyXFreeX':
+        totalPrice +=
+          pricingRule.product.price *
+          (skuQantity -
+            Math.floor(skuQantity / pricingRule.discount.buyQuantity));
+        break;
+      default:
+        totalPrice +=
+          (products?.find(({ sku: productSku }) => productSku === sku)?.price ||
+            0) * skuQantity;
+        break;
+    }
+  });
+
+  return totalPrice;
 };
 
 const calculateTotal = ({
@@ -102,16 +123,7 @@ const calculateTotal = ({
   skus: Sku[];
   pricingRules: PricingRule[];
 }) => {
-  const total: number = skus.reduce((previousTotal, sku) => {
-    let currentTotal = previousTotal;
-    const price = getAmountWithPriceRule({ sku, pricingRules });
-
-    if (price) {
-      currentTotal = currentTotal + price;
-    }
-
-    return currentTotal;
-  }, 0);
+  const total = getTotalWithPricingRules({ skus, pricingRules });
 
   return total;
 };

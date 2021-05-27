@@ -45,25 +45,21 @@ describe('calculateTotal', () => {
     ).toEqual(1294.96);
   });
 
-  //   it('should calculate total with fixed and buy x get x free discount', () => {
-  //     expect(
-  //       calculateTotal({
-  //         skus: ['standout', 'standout', 'standout', 'premium'],
-  //         pricingRules: [
-  //           {
-  //             sku: 'standout',
-  //             discount: {
-  //               discountType: 'buyXFreeX',
-  //               buyQuantity: 4,
-  //               freeQuantity: 5,
-  //             },
-  //           },
-  //           {
-  //             sku: 'premium',
-  //             discount: { discountType: 'fixed', amount: 389.99 },
-  //           },
-  //         ],
-  //       }),
-  //     ).toEqual(1294.96);
-  //   });
+  // Other tests
+  it('should calculate total with percentage discount', () => {
+    expect(
+      calculateTotal({
+        skus: ['standout', 'standout', 'standout'],
+        pricingRules: [
+          {
+            sku: 'standout',
+            discount: {
+              discountType: 'percentage',
+              percentage: 100,
+            },
+          },
+        ],
+      }),
+    ).toEqual(0);
+  });
 });
