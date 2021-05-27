@@ -22,20 +22,27 @@ export default () => {
   return (
     <ContentBlock width="large">
       <Box background="brand" paddingY="xxlarge" paddingX="gutter">
-        <Stack space="medium">
-          <Heading level="1">Checkout Demo</Heading>
-        </Stack>
-        <Dropdown
-          onChange={(e: any) => setCustomer(e.target.value)}
-          value={customer}
-          id=""
-          placeholder="Default"
-        >
-          <option />
-          <option>SecondBite</option>
-          <option>Axil Coffee Roasters</option>
-          <option>MYER</option>
-        </Dropdown>
+        <Columns space="gutter">
+          <Column>
+            <Stack space="medium">
+              <Heading level="1">Checkout Demo</Heading>
+            </Stack>
+          </Column>
+          <Column width="1/5">
+            <Dropdown
+              label="Customer"
+              onChange={(e: any) => setCustomer(e.target.value)}
+              value={customer}
+              id=""
+              placeholder="Default"
+            >
+              <option />
+              <option>SecondBite</option>
+              <option>Axil Coffee Roasters</option>
+              <option>MYER</option>
+            </Dropdown>
+          </Column>
+        </Columns>
       </Box>
       <Box paddingX={['xsmall', 'gutter']} style={{ marginTop: '-40px' }}>
         <Card>
