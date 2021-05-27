@@ -69,7 +69,7 @@ const pricingRuleQuery = (pricingRules: PricingRule[], sku: Sku) => {
   return { ...pricingRule, product };
 };
 
-const getTotalWithPricingRules = ({
+const getTotal = ({
   cartItems,
   pricingRules = undefined,
 }: {
@@ -124,9 +124,9 @@ const calculateTotal = ({
   cartItems: Partial<Record<Sku, number>>;
   pricingRules: PricingRule[];
 }) => {
-  const total = getTotalWithPricingRules({ cartItems, pricingRules });
+  const total = getTotal({ cartItems, pricingRules });
 
-  const totalWithoutDiscount = getTotalWithPricingRules({ cartItems });
+  const totalWithoutDiscount = getTotal({ cartItems });
 
   return { total, discountAmount: total - totalWithoutDiscount };
 };
