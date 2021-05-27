@@ -103,13 +103,14 @@ const getTotalWithPricingRules = ({
           skuQantity;
         break;
       case 'buyXFreeX':
-        totalPrice +=
-          pricingRule.product.price *
-          (skuQantity -
-            Math.floor(
-              (skuQantity / pricingRule.discount.buyQuantity) *
-                pricingRule.discount.freeQuantity,
-            ));
+        const quantityExcludingFree =
+          skuQantity -
+          Math.floor(
+            (skuQantity / pricingRule.discount.buyQuantity) *
+              pricingRule.discount.freeQuantity,
+          );
+
+        totalPrice += pricingRule.product.price * quantityExcludingFree;
         break;
       default:
         totalPrice +=
