@@ -72,7 +72,7 @@ const pricingRuleQuery = (pricingRules: PricingRule[], sku: Sku) => {
 const productsQuery = (skus: Sku[]) =>
   products.filter(({ sku }) => skus.includes(sku));
 
-const getTotal = ({
+const getDiscountAmount = ({
   cartItems,
   pricingRules = undefined,
 }: {
@@ -90,29 +90,23 @@ const getTotal = ({
     // Abstract out into functions when this gets too long :)
     switch (pricingRule?.discount.discountType) {
       case 'fixed':
-        totalPrice += pricingRule.discount.amount * skuQantity;
+        totalPrice +=
+          (pricingRule.product.price - pricingRule.discount.amount) *
+          skuQantity;
         break;
       case 'percentage':
         totalPrice +=
-          (pricingRule.product.price -
-            pricingRule.product.price *
-              (pricingRule.discount.percentage / 100)) *
+          pricingRule.product.price *
+          (pricingRule.discount.percentage / 100) *
           skuQantity;
         break;
       case 'buyXFreeX':
-        const quantityExcludingFree =
-          skuQantity -
-          Math.floor(
-            (skuQantity / pricingRule.discount.buyQuantity) *
-              pricingRule.discount.freeQuantity,
-          );
+        const freeQuantity = Math.floor(
+          (skuQantity / pricingRule.discount.buyQuantity) *
+            pricingRule.discount.freeQuantity,
+        );
 
-        totalPrice += pricingRule.product.price * quantityExcludingFree;
-        break;
-      default:
-        const productPrice = productsQuery([sku])[0].price;
-
-        totalPrice += (productPrice || 0) * skuQantity;
+        totalPrice += pricingRule.product.price * freeQuantity;
         break;
     }
   });
@@ -127,11 +121,17 @@ const calculateTotal = ({
   cartItems: Partial<Record<Sku, number>>;
   pricingRules: PricingRule[];
 }) => {
-  const total = getTotal({ cartItems, pricingRules });
+  const total = productsQuery(Object.keys(cartItems) as Sku[]).reduce(
+    (result, { price, sku }) => result + price * (cartItems[sku] || 0),
+    0,
+  );
 
-  const totalWithoutDiscount = getTotal({ cartItems });
+  const discountAmount = getDiscountAmount({ cartItems, pricingRules });
 
-  return { total, discountAmount: total - totalWithoutDiscount };
+  return {
+    total: Number((total - discountAmount).toFixed(2)),
+    discountAmount: Number(discountAmount.toFixed(2)),
+  };
 };
 
 export default calculateTotal;

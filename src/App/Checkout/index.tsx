@@ -70,9 +70,9 @@ export default () => {
                         </Text>
                       ))}
                     </List>
-                    <Text>Total: ${cart.total.toFixed(2)}</Text>
+                    <Text>Total: ${cart.total}</Text>
                     <Text tone="brandAccent">
-                      Discount: ${cart.discountAmount.toFixed(2)}
+                      Discount: ${cart.discountAmount}
                     </Text>
                     <Columns space="gutter" collapseBelow="desktop">
                       <Column width="content">

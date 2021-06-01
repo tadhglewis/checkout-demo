@@ -27,7 +27,7 @@ describe('calculateTotal', () => {
           },
         ],
       }),
-    ).toStrictEqual({ total: 934.97, discountAmount: -269.99 });
+    ).toStrictEqual({ total: 934.97, discountAmount: 269.99 });
   });
 
   // Axil Coffee Roasters
@@ -42,7 +42,7 @@ describe('calculateTotal', () => {
           },
         ],
       }),
-    ).toStrictEqual({ total: 1294.96, discountAmount: -69 });
+    ).toStrictEqual({ total: 1294.96, discountAmount: 69 });
   });
 
   // MYER
@@ -71,7 +71,7 @@ describe('calculateTotal', () => {
           },
         ],
       }),
-    ).toEqual({ total: 2071.94, discountAmount: -332.99000000000024 });
+    ).toEqual({ total: 2071.94, discountAmount: 332.99 });
   });
 
   // Other tests
@@ -89,7 +89,7 @@ describe('calculateTotal', () => {
           },
         ],
       }),
-    ).toStrictEqual({ total: 0, discountAmount: -968.97 });
+    ).toStrictEqual({ total: 0, discountAmount: 968.97 });
   });
 
   it('should calculate total with percentage, fixed, and 10 for 6 (4 free) discount', () => {
@@ -125,7 +125,7 @@ describe('calculateTotal', () => {
           },
         ],
       }),
-    ).toStrictEqual({ total: 2399.94, discountAmount: -2142.94 });
+    ).toStrictEqual({ total: 2399.94, discountAmount: 2142.94 });
   });
 
   it('should not give any discounts due to buy quantity - buy 3 for 2', () => {
@@ -160,6 +160,6 @@ describe('calculateTotal', () => {
           },
         ],
       }),
-    ).toStrictEqual({ total: 242.991, discountAmount: -26.998999999999995 });
+    ).toStrictEqual({ total: 242.99, discountAmount: 27 });
   });
 });
