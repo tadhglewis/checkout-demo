@@ -6,14 +6,13 @@ export const products: Product[] = [
   {
     id: '1',
     sku: 'classic',
-    title: 'Clasic',
+    title: 'Classic',
     description: 'Offers the most basic level of advertisement',
     price: 269.99,
   },
   {
     id: '2',
     sku: 'standout',
-
     title: 'Stand out',
     description:
       'Allows advertisers to use a company logo and use a longer presentation text',

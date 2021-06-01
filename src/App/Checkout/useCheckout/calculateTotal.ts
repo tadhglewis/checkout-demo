@@ -60,7 +60,7 @@ const pricingRuleQuery = (pricingRules: PricingRule[], sku: Sku) => {
   const pricingRule = pricingRules.find(
     ({ sku: pricingRuleSku }) => sku === pricingRuleSku,
   );
-  const product = products.find(({ sku: productSku }) => productSku === sku);
+  const product = productsQuery([sku])[0];
 
   if (!product || !pricingRule) {
     return null;
@@ -68,6 +68,9 @@ const pricingRuleQuery = (pricingRules: PricingRule[], sku: Sku) => {
 
   return { ...pricingRule, product };
 };
+
+const productsQuery = (skus: Sku[]) =>
+  products.filter(({ sku }) => skus.includes(sku));
 
 const getTotal = ({
   cartItems,
@@ -107,9 +110,9 @@ const getTotal = ({
         totalPrice += pricingRule.product.price * quantityExcludingFree;
         break;
       default:
-        totalPrice +=
-          (products?.find(({ sku: productSku }) => productSku === sku)?.price ||
-            0) * skuQantity;
+        const productPrice = productsQuery([sku])[0].price;
+
+        totalPrice += (productPrice || 0) * skuQantity;
         break;
     }
   });

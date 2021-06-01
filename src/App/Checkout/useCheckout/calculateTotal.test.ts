@@ -7,8 +7,8 @@ describe('calculateTotal', () => {
       calculateTotal({
         cartItems: { classic: 1, standout: 1, premium: 1 },
         pricingRules: [],
-      }).total,
-    ).toEqual(987.97);
+      }),
+    ).toStrictEqual({ total: 987.97, discountAmount: 0 });
   });
 
   // SecondBite
@@ -26,8 +26,8 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }).total,
-    ).toEqual(934.97);
+      }),
+    ).toStrictEqual({ total: 934.97, discountAmount: -269.99 });
   });
 
   // Axil Coffee Roasters
@@ -41,8 +41,8 @@ describe('calculateTotal', () => {
             discount: { discountType: 'fixed', amount: 299.99 },
           },
         ],
-      }).total,
-    ).toEqual(1294.96);
+      }),
+    ).toStrictEqual({ total: 1294.96, discountAmount: -69 });
   });
 
   // MYER
@@ -70,8 +70,8 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }).total,
-    ).toEqual(2071.94);
+      }),
+    ).toEqual({ total: 2071.94, discountAmount: -332.99000000000024 });
   });
 
   // Other tests
@@ -88,8 +88,8 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }).total,
-    ).toEqual(0);
+      }),
+    ).toStrictEqual({ total: 0, discountAmount: -968.97 });
   });
 
   it('should calculate total with percentage, fixed, and 10 for 6 (4 free) discount', () => {
@@ -124,8 +124,8 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }).total,
-    ).toEqual(2399.94);
+      }),
+    ).toStrictEqual({ total: 2399.94, discountAmount: -2142.94 });
   });
 
   it('should not give any discounts due to buy quantity - buy 3 for 2', () => {
@@ -142,8 +142,8 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }).total,
-    ).toEqual(539.98);
+      }),
+    ).toStrictEqual({ total: 539.98, discountAmount: 0 });
   });
 
   it('should give 10% discount on classic sku', () => {
@@ -159,7 +159,7 @@ describe('calculateTotal', () => {
             },
           },
         ],
-      }).total,
-    ).toEqual(242.991);
+      }),
+    ).toStrictEqual({ total: 242.991, discountAmount: -26.998999999999995 });
   });
 });
