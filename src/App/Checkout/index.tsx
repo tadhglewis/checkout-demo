@@ -71,7 +71,11 @@ export default () => {
                       ))}
                     </List>
                     <Text>Total: ${cart.total}</Text>
-                    <Text tone="brandAccent">${cart.discountAmount} off</Text>
+                    {cart.discountAmount ? (
+                      <Text tone="brandAccent">
+                        Discount: -${cart.discountAmount}
+                      </Text>
+                    ) : null}
                     <Columns space="gutter" collapseBelow="desktop">
                       <Column width="content">
                         <Button tone="brandAccent">Purchase</Button>
