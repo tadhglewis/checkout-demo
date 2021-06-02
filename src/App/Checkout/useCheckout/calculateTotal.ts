@@ -2,131 +2,174 @@ import { products } from '../../dummyData';
 import { Sku } from '../Product';
 
 type FixedDiscount = {
-  discountType: 'fixed';
+  type: 'fixed';
   amount: number;
+  sku: Sku;
 };
 
 type PercentageDiscount = {
-  discountType: 'percentage';
+  type: 'percentage';
   percentage: number;
+  sku: Sku;
 };
 
-type BuyXGetXFree = {
-  discountType: 'buyXFreeX';
+type BuyXGetXFreeDiscount = {
+  type: 'buyXFreeX';
   freeQuantity: number;
   buyQuantity: number;
-};
-
-type Discount = FixedDiscount | PercentageDiscount | BuyXGetXFree;
-
-export type PricingRule = {
   sku: Sku;
-  discount: Discount;
 };
 
-// In the real world, you would probably want this backend and a graphql query that looks something like this to be consumed in the front end
-
-// `
-// query getPricingRule {
-//   getPricingRule(sku: ["classic", "standout", "premium"]) {
-//     sku
-//     discount {
-//       ... on FixedDiscount {
-//         discountType
-//         amount
-//       }
-
-//       ... on PercentageDiscount {
-//         discountType
-//         percentage
-//       }
-
-//       ... on BuyXGetXFree {
-//         discountType
-//         freeQuantity
-//         buyQuantity
-//       }
-//     }
-//     product {
-//       ...
-//     }
-//   }
-// }
-// `
-
-// for this demo, we just use a function
-
-const pricingRuleQuery = (pricingRules: PricingRule[], sku: Sku) => {
-  const pricingRule = pricingRules.find(
-    ({ sku: pricingRuleSku }) => sku === pricingRuleSku,
-  );
-  const product = productsQuery([sku])[0];
-
-  if (!product || !pricingRule) {
-    return null;
-  }
-
-  return { ...pricingRule, product };
+type GetYWithXDiscount = {
+  type: 'getYWithX';
+  xSku: Sku;
+  sku: Sku;
 };
 
-const productsQuery = (skus: Sku[]) =>
-  products.filter(({ sku }) => skus.includes(sku));
+export type PricingRule =
+  | FixedDiscount
+  | PercentageDiscount
+  | BuyXGetXFreeDiscount
+  | GetYWithXDiscount;
 
-const getDiscountAmount = ({
+type CartItem = Partial<Record<Sku, number>>;
+
+type ResolverArgs = {
+  cartItems: CartItem;
+  prices: CartItem;
+  rule: PricingRule;
+};
+
+const percentageResolver = ({
   cartItems,
-  pricingRules = undefined,
-}: {
-  cartItems: Partial<Record<Sku, number>>;
-  pricingRules?: PricingRule[];
-}) => {
-  let totalPrice = 0;
+  rule,
+  prices,
+}: ResolverArgs & { rule: PercentageDiscount }): number => {
+  let total = 0;
+  const quantity = cartItems[rule.sku] || 0;
+  const price = prices[rule.sku] || 0;
 
-  (Object.keys(cartItems) as Sku[]).forEach((sku) => {
-    const pricingRule = pricingRules
-      ? pricingRuleQuery(pricingRules, sku)
-      : null;
-    const skuQantity = cartItems[sku] || 0;
+  total = price * (rule.percentage / 100) * quantity;
 
-    // Abstract out into functions when this gets too long :)
-    switch (pricingRule?.discount.discountType) {
-      case 'fixed':
-        totalPrice +=
-          (pricingRule.product.price - pricingRule.discount.amount) *
-          skuQantity;
-        break;
-      case 'percentage':
-        totalPrice +=
-          pricingRule.product.price *
-          (pricingRule.discount.percentage / 100) *
-          skuQantity;
-        break;
-      case 'buyXFreeX':
-        const freeQuantity = Math.floor(
-          (skuQantity / pricingRule.discount.buyQuantity) *
-            pricingRule.discount.freeQuantity,
-        );
+  return total;
+};
 
-        totalPrice += pricingRule.product.price * freeQuantity;
-        break;
-    }
-  });
+const buyXFreeXResolver = ({
+  cartItems,
+  rule,
+  prices,
+}: ResolverArgs & { rule: BuyXGetXFreeDiscount }): number => {
+  let total = 0;
+  const quantity = cartItems[rule.sku] || 0;
+  const price = prices[rule.sku] || 0;
 
-  return totalPrice;
+  const freeQuantity = Math.floor(
+    (quantity / rule.buyQuantity) * rule.freeQuantity,
+  );
+
+  total = price * freeQuantity;
+
+  return total;
+};
+
+const getYWithXResolver = ({
+  cartItems,
+  rule,
+  prices,
+}: ResolverArgs & { rule: GetYWithXDiscount }): number => {
+  let total = 0;
+  const quantity = Math.min(
+    cartItems[rule.xSku] || 0,
+    cartItems[rule.sku] || 0,
+  );
+
+  const yPrice = prices[rule.sku] || 0;
+
+  total = yPrice * quantity;
+
+  return total;
+};
+
+const resolvers = (args: ResolverArgs) => {
+  switch (args.rule.type) {
+    case 'percentage':
+      return percentageResolver(
+        args as ResolverArgs & { rule: PercentageDiscount },
+      );
+    case 'buyXFreeX':
+      return buyXFreeXResolver(
+        args as ResolverArgs & { rule: BuyXGetXFreeDiscount },
+      );
+    case 'getYWithX':
+      return getYWithXResolver(
+        args as ResolverArgs & { rule: GetYWithXDiscount },
+      );
+    default:
+      return 0;
+  }
 };
 
 const calculateTotal = ({
   cartItems,
   pricingRules,
 }: {
-  cartItems: Partial<Record<Sku, number>>;
+  cartItems: CartItem;
   pricingRules: PricingRule[];
 }) => {
-  const total = productsQuery(Object.keys(cartItems) as Sku[]).reduce(
-    (result, { price, sku }) => result + price * (cartItems[sku] || 0),
+  const total = products
+    .filter(({ sku }) => (Object.keys(cartItems) as Sku[]).includes(sku))
+    .reduce(
+      (result, { price, sku }) => result + price * (cartItems[sku] || 0),
+      0,
+    );
+
+  const prices = (Object.keys(cartItems) as Sku[]).reduce<CartItem>(
+    (result, sku) => {
+      result[sku] =
+        pricingRules.find(
+          (pricingRule): pricingRule is FixedDiscount =>
+            pricingRule.type === 'fixed' && pricingRule.sku === sku,
+        )?.amount ||
+        products.find(({ sku: productSku }) => sku === productSku)?.price;
+
+      return result;
+    },
+    {},
+  );
+
+  const priceIncludingFixed = (Object.keys(cartItems) as Sku[]).reduce<number>(
+    (result, sku) => {
+      const quantity = cartItems[sku] || 0;
+
+      const price =
+        pricingRules.find(
+          (pricingRule): pricingRule is FixedDiscount =>
+            pricingRule.type === 'fixed' && pricingRule.sku === sku,
+        )?.amount ||
+        products.find(({ sku: productSku }) => sku === productSku)?.price;
+
+      return result + (price || 0) * quantity;
+    },
     0,
   );
 
-  const discountAmount = getDiscountAmount({ cartItems, pricingRules });
+  let discountAmount = Object.keys(cartItems)
+    .reduce<PricingRule[][]>((result, sku) => {
+      const filteredPricingRule = pricingRules.filter(
+        (rule) => rule.sku === sku || rule.sku === null,
+      );
+
+      return [
+        ...result,
+        ...(filteredPricingRule.length ? [filteredPricingRule] : []),
+      ];
+    }, [])
+    .map((rules) =>
+      Math.max(...rules.map((rule) => resolvers({ cartItems, rule, prices }))),
+    )
+    .reduce((result, num) => result + num, 0);
+
+  discountAmount += total - priceIncludingFixed;
 
   return {
     total: Number((total - discountAmount).toFixed(2)),
