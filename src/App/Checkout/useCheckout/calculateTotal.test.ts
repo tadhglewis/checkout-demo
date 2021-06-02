@@ -160,4 +160,78 @@ describe('calculateTotal', () => {
       }),
     ).toStrictEqual({ total: 645.98, discountAmount: 269.99 });
   });
+
+  it('should not get any free classic because no standout is added to cart', () => {
+    expect(
+      calculateTotal({
+        cartItems: { classic: 1 },
+        pricingRules: [
+          {
+            sku: 'classic',
+            type: 'getYWithX',
+            xSku: 'standout',
+          },
+        ],
+      }),
+    ).toStrictEqual({ total: 269.99, discountAmount: 0 });
+  });
+
+  it('should pick the highest percentage discount on top of fixed discount', () => {
+    expect(
+      calculateTotal({
+        cartItems: { classic: 1 },
+        pricingRules: [
+          {
+            sku: 'classic',
+            type: 'percentage',
+            percentage: 10,
+          },
+          {
+            sku: 'classic',
+            type: 'percentage',
+            percentage: 50,
+          },
+          { sku: 'classic', type: 'fixed', amount: 100 },
+        ],
+      }),
+    ).toStrictEqual({ total: 50, discountAmount: 219.99 });
+  });
+
+  it('should calculate total with 5 for the price of 4 and get classic free with every standout', () => {
+    expect(
+      calculateTotal({
+        cartItems: { classic: 5, standout: 5 },
+        pricingRules: [
+          {
+            sku: 'classic',
+            type: 'getYWithX',
+            xSku: 'standout',
+          },
+          {
+            sku: 'standout',
+            type: 'buyXFreeX',
+            buyQuantity: 5,
+            freeQuantity: 1,
+          },
+        ],
+      }),
+    ).toStrictEqual({ total: 1291.96, discountAmount: 1672.94 });
+  });
+
+  it('should use higher percentage discount over 5 for the price of 3', () => {
+    expect(
+      calculateTotal({
+        cartItems: { standout: 5 },
+        pricingRules: [
+          {
+            sku: 'standout',
+            type: 'buyXFreeX',
+            buyQuantity: 5,
+            freeQuantity: 2,
+          },
+          { sku: 'standout', type: 'percentage', percentage: 70 },
+        ],
+      }),
+    ).toStrictEqual({ total: 484.49, discountAmount: 1130.46 });
+  });
 });
