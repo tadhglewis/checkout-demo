@@ -137,7 +137,7 @@ const calculateTotal = ({
     {},
   );
 
-  const priceIncludingFixed = (Object.keys(cartItems) as Sku[]).reduce<number>(
+  const priceIncludingFixed = (Object.keys(cartItems) as Sku[]).reduce(
     (result, sku) => {
       const quantity = cartItems[sku] || 0;
 
