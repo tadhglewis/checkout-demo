@@ -49,6 +49,7 @@ describe('calculateTotal', () => {
     expect(
       calculateTotal({
         cartItems: {
+          classic: 3,
           standout: 5,
           premium: 2,
         },
@@ -64,9 +65,15 @@ describe('calculateTotal', () => {
             type: 'fixed',
             amount: 389.99,
           },
+          {
+            sku: 'classic',
+            type: 'buyXDiscountX',
+            discountAmount: 249.99,
+            buyAmount: 3,
+          },
         ],
       }),
-    ).toEqual({ total: 2071.94, discountAmount: 332.99 });
+    ).toEqual({ total: 2821.91, discountAmount: 392.99 });
   });
 
   // Other tests
@@ -233,5 +240,21 @@ describe('calculateTotal', () => {
         ],
       }),
     ).toStrictEqual({ total: 484.49, discountAmount: 1130.46 });
+  });
+
+  it('should discount premium ad to $379.99 when buying 4 or more premium ads', () => {
+    expect(
+      calculateTotal({
+        cartItems: { premium: 5 },
+        pricingRules: [
+          {
+            sku: 'premium',
+            type: 'buyXDiscountX',
+            discountAmount: 379.99,
+            buyAmount: 4,
+          },
+        ],
+      }),
+    ).toStrictEqual({ total: 1899.95, discountAmount: 75 });
   });
 });

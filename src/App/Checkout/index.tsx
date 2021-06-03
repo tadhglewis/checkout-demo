@@ -34,7 +34,7 @@ export default () => {
           <Column width="1/5">
             <Dropdown
               label="Customer"
-              onChange={(e: any) => setCustomer(e.target.value)}
+              onChange={(e) => setCustomer(e.currentTarget.value)}
               value={customer}
               id=""
               placeholder="Default"

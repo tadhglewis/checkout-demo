@@ -26,11 +26,19 @@ type GetYWithXDiscount = {
   sku: Sku;
 };
 
+type BuyXDiscountX = {
+  type: 'buyXDiscountX';
+  sku: Sku;
+  buyAmount: number;
+  discountAmount: number;
+};
+
 export type PricingRule =
   | FixedDiscount
   | PercentageDiscount
   | BuyXGetXFreeDiscount
-  | GetYWithXDiscount;
+  | GetYWithXDiscount
+  | BuyXDiscountX;
 
 type CartItem = Partial<Record<Sku, number>>;
 
@@ -40,18 +48,24 @@ type ResolverArgs = {
   rule: PricingRule;
 };
 
+const commonVariables = ({
+  rule,
+  prices,
+  cartItems,
+}: {
+  prices: CartItem;
+  rule: PricingRule;
+  cartItems: CartItem;
+}) => ({ quantity: cartItems[rule.sku] || 0, price: prices[rule.sku] || 0 });
+
 const percentageResolver = ({
   cartItems,
   rule,
   prices,
 }: ResolverArgs & { rule: PercentageDiscount }): number => {
-  let total = 0;
-  const quantity = cartItems[rule.sku] || 0;
-  const price = prices[rule.sku] || 0;
+  const { quantity, price } = commonVariables({ rule, prices, cartItems });
 
-  total = price * (rule.percentage / 100) * quantity;
-
-  return total;
+  return price * (rule.percentage / 100) * quantity;
 };
 
 const buyXFreeXResolver = ({
@@ -59,17 +73,13 @@ const buyXFreeXResolver = ({
   rule,
   prices,
 }: ResolverArgs & { rule: BuyXGetXFreeDiscount }): number => {
-  let total = 0;
-  const quantity = cartItems[rule.sku] || 0;
-  const price = prices[rule.sku] || 0;
+  const { quantity, price } = commonVariables({ rule, prices, cartItems });
 
   const freeQuantity = Math.floor(
     (quantity / rule.buyQuantity) * rule.freeQuantity,
   );
 
-  total = price * freeQuantity;
-
-  return total;
+  return price * freeQuantity;
 };
 
 const getYWithXResolver = ({
@@ -77,17 +87,28 @@ const getYWithXResolver = ({
   rule,
   prices,
 }: ResolverArgs & { rule: GetYWithXDiscount }): number => {
-  let total = 0;
+  const { price } = commonVariables({ rule, prices, cartItems });
+
   const quantity = Math.min(
     cartItems[rule.xSku] || 0,
     cartItems[rule.sku] || 0,
   );
 
-  const yPrice = prices[rule.sku] || 0;
+  return price * quantity;
+};
 
-  total = yPrice * quantity;
+const buyXDiscountXResolver = ({
+  cartItems,
+  rule,
+  prices,
+}: ResolverArgs & { rule: BuyXDiscountX }): number => {
+  const { quantity, price } = commonVariables({ rule, prices, cartItems });
 
-  return total;
+  if (quantity >= rule.buyAmount) {
+    return (price - rule.discountAmount) * quantity;
+  }
+
+  return 0;
 };
 
 const resolvers = (args: ResolverArgs) => {
@@ -103,6 +124,10 @@ const resolvers = (args: ResolverArgs) => {
     case 'getYWithX':
       return getYWithXResolver(
         args as ResolverArgs & { rule: GetYWithXDiscount },
+      );
+    case 'buyXDiscountX':
+      return buyXDiscountXResolver(
+        args as ResolverArgs & { rule: BuyXDiscountX },
       );
     default:
       return 0;
