@@ -25,7 +25,7 @@ const useCheckout = () => {
     setCart(
       calculateTotal({
         cartItems,
-        pricingRules: pricingRules[customer],
+        pricingRules: pricingRules[customer] || [],
       }),
     );
   }, [cartItems, customer]);

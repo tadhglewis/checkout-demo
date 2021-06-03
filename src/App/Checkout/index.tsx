@@ -34,7 +34,7 @@ export default () => {
           <Column width="1/5">
             <Dropdown
               label="Customer"
-              onChange={(e: any) => setCustomer(e.target.value)}
+              onChange={(e) => setCustomer(e.currentTarget.value)}
               value={customer}
               id=""
               placeholder="Default"
@@ -70,10 +70,12 @@ export default () => {
                         </Text>
                       ))}
                     </List>
-                    <Text>Total: ${cart.total.toFixed(2)}</Text>
-                    <Text tone="brandAccent">
-                      Discount: ${cart.discountAmount.toFixed(2)}
-                    </Text>
+                    <Text>Total: ${cart.total}</Text>
+                    {cart.discountAmount ? (
+                      <Text tone="brandAccent">
+                        Discount: -${cart.discountAmount}
+                      </Text>
+                    ) : null}
                     <Columns space="gutter" collapseBelow="desktop">
                       <Column width="content">
                         <Button tone="brandAccent">Purchase</Button>
