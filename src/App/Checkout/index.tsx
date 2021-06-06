@@ -42,6 +42,7 @@ export default () => {
               <option />
               <option>SecondBite</option>
               <option>Axil Coffee Roasters</option>
+              <option>Jora</option>
               <option>MYER</option>
             </Dropdown>
           </Column>

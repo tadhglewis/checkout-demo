@@ -44,6 +44,14 @@ export const pricingRules: Record<string, PricingRule[]> = {
       amount: 299.99,
     },
   ],
+  Jora: [
+    {
+      sku: 'premium',
+      type: 'buyXDiscountX',
+      buyAmount: 4,
+      discountAmount: 379.99,
+    },
+  ],
   MYER: [
     {
       sku: 'standout',
@@ -55,6 +63,12 @@ export const pricingRules: Record<string, PricingRule[]> = {
       sku: 'premium',
       type: 'fixed',
       amount: 389.99,
+    },
+    {
+      sku: 'classic',
+      type: 'buyXDiscountX',
+      discountAmount: 249.99,
+      buyAmount: 3,
     },
   ],
 };
